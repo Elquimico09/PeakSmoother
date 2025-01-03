@@ -14,8 +14,7 @@ def GPR(X, y):
     X = X.reshape(-1, 1)
 
     length_scale = (X.max() - X.min()) / 10
-    kernel = (ConstantKernel(1, (1e-2, 1e2)) *
-    RBF(length_scale, (1e-2, 1e2)) +
+    kernel = (RBF(length_scale, (1e-2, 1e2)) +
     WhiteKernel(1e-5, (1e-3, 1e1)))
     gpr = GaussianProcessRegressor(kernel=kernel, n_restarts_optimizer=10, alpha = 1e-10)
 
