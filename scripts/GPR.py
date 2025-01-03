@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF, WhiteKernel, ConstantKernel
 
-def GPR(X, y, num_pred_points=500, downsample=10):
+def GPR(X, y, num_pred_points=750, downsample=5):
     """
     Gaussian Process Regression (GPR) model with options for downsampling and reduced prediction resolution.
     """
