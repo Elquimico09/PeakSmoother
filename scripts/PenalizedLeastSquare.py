@@ -3,15 +3,13 @@ import numpy as np
 from scipy.sparse import diags, identity
 from scipy.linalg import solve
 
-def PenalizedLeastSquare(x, y, lambda_, p_order = 2):
+def PenalizedLeastSquare(y, lambda_=1e-3):
     """
     Apply Penalized Least Square smoothing to intensity data.
 
     Parameters:
-    x (np.array): RT Data
     y (np.array): Intensity Data
     lambda_ (float): Penalty parameter
-    p_order (int): Order of the polynomial used to fit the samples
     Returns:
     smoothed_data (np.array): Intensity data after applying the Penalized Least Square smoothing
     """

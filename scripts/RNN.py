@@ -1,9 +1,14 @@
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.model_selection import train_test_split
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, LSTM, Dropout
 from tensorflow.keras.optimizers import Adam
+
+def pad_predictions(predictions, input_length, window_size):
+    padding = [np.nan] * window_size
+    padded_predictions = np.concatenate([padding, predictions.flatten()])
+    return padded_predictions
+
 
 def RNN(y, window_size=30, epochs=100, batch_size=32, learning_rate=0.0001):
     """
@@ -31,14 +36,11 @@ def RNN(y, window_size=30, epochs=100, batch_size=32, learning_rate=0.0001):
             y.append(data[i+window_size])
         return np.array(X), np.array(y)
 
-    # Split into training and testing sets
-    train_data, test_data = train_test_split(normalized_y, test_size=0.2, shuffle=False)
-    X_train, y_train = create_sequence(train_data, window_size)
-    X_test, y_test = create_sequence(test_data, window_size)
+    # Create sequences from the entire dataset
+    X, y = create_sequence(normalized_y, window_size)
 
     # Reshape for RNN input
-    X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], 1)
-    X_test = X_test.reshape(X_test.shape[0], X_test.shape[1], 1)
+    X = X.reshape(X.shape[0], X.shape[1], 1)
 
     # Build RNN model
     model = Sequential([
@@ -53,13 +55,14 @@ def RNN(y, window_size=30, epochs=100, batch_size=32, learning_rate=0.0001):
 
     model.compile(optimizer=Adam(learning_rate=learning_rate), loss='mse')
 
-    # Train the model
-    model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, verbose=1, validation_data=(X_test, y_test))
+    # Train the model on the entire dataset
+    model.fit(X, y, epochs=epochs, batch_size=batch_size, verbose=1)
 
-    # Predict on the test set
-    predictions = model.predict(X_test, verbose=1)
+    # Predict on the entire dataset
+    predictions = model.predict(X, verbose=1)
 
     # Inverse transform predictions
     predictions_inv = scaler.inverse_transform(predictions)
+    predictions = pad_predictions(predictions_inv, len(normalized_y), window_size)
 
-    return predictions_inv
+    return predictions
