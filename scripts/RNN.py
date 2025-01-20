@@ -10,7 +10,7 @@ def pad_predictions(predictions, input_length, window_size):
     return padded_predictions
 
 
-def RNN(y, window_size=30, epochs=100, batch_size=32, learning_rate=0.0001):
+def RNN(y, window_size=30, epochs=100, batch_size=15, learning_rate=0.001):
     """
     Recurrent Neural Network (RNN) model for smoothing intensity data.
 
