@@ -13,14 +13,14 @@ def downsample_with_kmeans(X, y, n_clusters=500):
 def GPR(X, y, num_pred_points=15000, downsample=3, use_kmeans=True):
     if len(X) > downsample:
         if use_kmeans:
-            X, y = downsample_with_kmeans(X, y, n_clusters=len(X)//downsample)
+            X, y = downsample_with_kmeans(X, y, n_clusters=len(X)//downsample * 2)
         else:
             X = X[::downsample]
             y = y[::downsample]
 
     X = X.reshape(-1, 1)
 
-    kernel = ConstantKernel(1, (1e-2, 1e2)) * RBF(1, (1e-2, 1e2)) + WhiteKernel(1e-5, (1e-3, 1e1))
+    kernel = ConstantKernel(1, (1e-2, 1e2)) * RBF(10, (1e-1, 1e3)) + WhiteKernel(1e-6, (1e-6, 1e0))
     gpr = GaussianProcessRegressor(kernel=kernel, n_restarts_optimizer=5, alpha=1e-10)
     gpr.fit(X, y)
 
